@@ -35,8 +35,6 @@ def dfs_must(chart, remain, solved):
         return True, chart, remain
 
 def lucky(chart, remain):
-    print(chart)
-    print(remain)
     chances = []
     for spec, qty in enumerate(remain):
         for i in range(qty):
@@ -55,7 +53,7 @@ if 'step' not in st.session_state:
 
 st.title("Term Planner")
 st.caption("made by JH")
-print(st.session_state.step)
+
 if st.session_state.step == 0:
     with st.form(key='form1'):
         specs = st.text_area("과 종류를 한 줄에 하나씩 입력해주세요.")
@@ -118,7 +116,7 @@ if st.session_state.step == 2:
                 continue
             for m in mult:
                 temp.append(spec2idx[m])
-            dic[j] = temp
+            dic[i] = temp
         # print(list(dic.items()))
         must += list(dic.items())
 
@@ -132,6 +130,7 @@ if st.session_state.step == 2:
         solved = [False for i in range(len(must))]
         entry = [[None for i in range(doctors)] for j in range(7)]
 
+        # print(entry, remain, must)
         success, c, r = dfs_must(entry, remain, solved)
         if not success:
             st.error("불가능합니다. 재시도해주세요")
