@@ -33,19 +33,42 @@ def dfs_must(chart, remain, solved):
     else:
         print("Done")
         return True, chart, remain
-
-def lucky(chart, remain):
+def check_duplicate(before, cur):
+    count = 0
+    for i,j in zip(before, cur):
+        if i == j:
+            count += 1
+    return count
+def lucky(before_chart, chart, remain):
     chances = []
     for spec, qty in enumerate(remain):
         for i in range(qty):
             chances.append(spec)
-    random.shuffle(chances)
-    cnt = 0
-    for i, spec in enumerate(chart):
-        if spec == None:
-            chart[i] = chances[cnt]
-            cnt += 1
-    return chart
+
+    if not before_chart:
+        random.shuffle(chances)
+        cnt = 0
+        for i, spec in enumerate(chart):
+            if spec == None:
+                chart[i] = chances[cnt]
+                cnt += 1
+        return chart
+    else:
+        best = 10000
+        best_chart = None
+        for r in range(100):
+            chart_temp = copy(chart)
+            random.shuffle(chances)
+            cnt = 0
+            for i, spec in enumerate(chart_temp):
+                if spec == None:
+                    chart_temp[i] = chances[cnt]
+                    cnt += 1
+            loss = check_duplicate(before_chart, chart_temp)
+            if loss < best:
+                best = loss
+                best_chart = chart_temp
+        return best_chart
 
 
 if 'step' not in st.session_state:
@@ -138,7 +161,11 @@ if st.session_state.step == 2:
             st.success("처리 완료")
             result = []
             for i in range(7):
-                result.append(lucky(c[i], r[i]))
+                if i == 0:
+                    result.append(lucky(None, c[i], r[i]))
+                    continue
+                result.append(lucky(result[i-1], c[i], r[i]))
+
             total = []
             for r in result:
                 people = [i[0] for i in sorted(enumerate(r), key=lambda x:x[1])]
