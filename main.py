@@ -148,11 +148,12 @@ if st.session_state.step == 2:
                 total.append(people2name)
             index = [f'{i+1}텀' for i in range(7)]
             df = pd.DataFrame(total, columns=columns, index=index)
-            csv = df.to_csv().encode('utf-8')
-            st.dataframe(df)
+            csv = df.to_csv()
+            st.table(df)
             st.download_button(
                 label="CSV 다운로드",
                 data=csv,
                 file_name='term.csv',
                 mime='text/csv',
             )
+            print(csv)
